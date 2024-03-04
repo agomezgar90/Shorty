@@ -56,7 +56,6 @@ app.post("/short", async (req, res) => {
                     return;
                 }
             });
-            res.redirect("/");
         } else {
             const _short = results[0].shortUrl;
             const _counts = results[0].counts;
@@ -73,7 +72,7 @@ app.post("/short", async (req, res) => {
 app.delete("/app/:id", async (req, res) => {
     const id = req.params.id;
     try {
-        await db.query('DELETE FROM url WHERE id = ?', id);
+        db.query('DELETE FROM url WHERE id = ?', id);
         res.status(200).json({ message: "URL deleted successfully" });
     } catch (error) {
         console.error("Error deleting URL:", error);

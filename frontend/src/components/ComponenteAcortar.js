@@ -39,7 +39,7 @@ const AddUrlComponent = () => {
                             value={url}
                             onChange={e => setUrl(e.target.value)}
                         />
-                        <div class="d-grid gap-3 col-6 mx-auto">
+                        <div className="d-grid gap-3 col-6 mx-auto">
                             <button type="submit" className="btn btn-success m-5">
                                 Acortar
                             </button>

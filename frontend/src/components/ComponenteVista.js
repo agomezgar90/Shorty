@@ -4,7 +4,6 @@ import '../App.css'; // Importa tu archivo CSS
 
 const ViewUrlComponent = () => {
   const [urls, setUrls] = useState([{}]);
-
   useEffect(() => {
     const fetchUrlAndSetUrl = async () => {
       const result = await axios.get("http://localhost:3333/app");
@@ -23,7 +22,7 @@ const ViewUrlComponent = () => {
   };
 
   return (
-    <div class="table-responsive">
+    <div className="table-responsive">
       <table className="table text-center">
         <thead className="table-primary text-center">
           <tr>
