@@ -4,14 +4,10 @@ const mysql = require("mysql2");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-
 dotenv.config();
 const app = express();
-
 app.use(cors());
 app.use(express.json());
-
-
 
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -74,6 +70,17 @@ app.post("/short", async (req, res) => {
     });
 });
 
+app.delete("/app/:id", async (req, res) => {
+    const id = req.params.id;
+    try {
+        await db.query('DELETE FROM url WHERE id = ?', id);
+        res.status(200).json({ message: "URL deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting URL:", error);
+        res.status(500).json({ error: "Failed to delete URL" });
+    }
+});
+
 app.get("/api/:shortUrl", async (req, res) => {
     const base = `http://localhost:3333/api`;
     try {
@@ -94,7 +101,7 @@ app.get("/api/:shortUrl", async (req, res) => {
                             console.log("Error updating count:", updateError); // Maneja el error de actualización
                             return res.status(500).json("Server Error"); // Devolver una respuesta de error al cliente
                         }
-                        return res.redirect(url.fullUrl); 
+                        return res.redirect(url.fullUrl);
                     });
                 } else {
                     res.status(404).json("Not found");
@@ -102,8 +109,8 @@ app.get("/api/:shortUrl", async (req, res) => {
             }
         });
     } catch (err) {
-        console.log("Catch block error:", err); 
-        res.status(500).json("Server Error"); 
+        console.log("Catch block error:", err);
+        res.status(500).json("Server Error");
     }
 });
 
