@@ -30,16 +30,16 @@ const AddUrlComponent = () => {
         <div>
             <main>
                 <section className="w-100 d-flex flex-column justify-content-center align-items-center">
-                    <h1 className="mb-2 fs-1">Shorty</h1>
+                    <h1 className="mb-5 fs-1">Shorty</h1>
                     <form className="w-50" onSubmit={onSubmit}>
                         <input
-                            className="w-100 border border-primary p-2 mb-2 fs-3 h-25"
+                            className="w-100 border border-primary p-2 mb-1 fs-3 h-25"
                             type="text"
                             placeholder="Escribe la dirección web"
                             value={url}
                             onChange={e => setUrl(e.target.value)}
                         />
-                        <div class="d-grid gap-2 col-6 mx-auto">
+                        <div class="d-grid gap-3 col-6 mx-auto">
                             <button type="submit" className="btn btn-success m-5">
                                 Acortar
                             </button>
