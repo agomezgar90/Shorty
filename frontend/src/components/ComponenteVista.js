@@ -1,21 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import axios from "axios"
-import '../App.css'; // Importa tu archivo CSS
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const ViewUrlComponent = () => {
-  const [urls, setUrls] = useState([{}]);
-
+  const [urls, setUrls] = useState([]);
   useEffect(() => {
-    const fetchUrlAndSetUrl = async () => {
-      const result = await axios.get("http://localhost:3333/app");
-      setUrls(result.data);
+    const fetchUrls = async () => {
+      try {
+        const response = await axios.get('/app');
+        const allUrls = response.data;
+        console.log(allUrls);
+        let pipo = Cookies.get();
+        console.log(pipo);
+        const storedUrls = allUrls.filter(url => Object.values(pipo).includes(url.shortUrl));
+        console.log(storedUrls);
+        setUrls(storedUrls);
+      } catch (error) {
+        console.error('Error al obtener las URLs:', error);
+      }
     };
-    fetchUrlAndSetUrl();
+    fetchUrls();
   }, [urls]);
 
   const deleteUrl = async (id) => {
     try {
-      await axios.delete(`http://localhost:3333/app/${id}`);
+      await axios.delete(`/app/${id}`);
       setUrls(urls.filter(url => url.id !== id));
     } catch (error) {
       console.error("Error deleting URL:", error);
@@ -51,5 +60,4 @@ const ViewUrlComponent = () => {
     </div>
   );
 }
-
 export default ViewUrlComponent;

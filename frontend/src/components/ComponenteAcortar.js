@@ -1,30 +1,33 @@
-import React, { useState } from 'react'
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { v4 as uuidv4 } from 'uuid';
 
 const AddUrlComponent = () => {
-    const [url, setUrl] = useState("");
+    const [url, setUrl] = useState('');
 
-
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
         if (!url) {
-            alert("please enter something");
+            alert('Por favor, introduce una URL.');
             return;
         }
 
-        axios
-            .post("http://localhost:3333/short", { urlOriginal: url })
-            .then(res => {
-                console.log(res.data);
-            })
-            .catch(err => {
-                console.log(err.message);
-            });
-
-        setUrl("")
-    }
-    console.log(url)
+        try {
+            const response = await axios.post('http://localhost:3333/short', { urlOriginal: url });
+            console.log(response);
+            const shortUrl = response.data.shortUrl;
+            console.log(shortUrl);
+            const uniqueCookieName = `shortUrl_${uuidv4()}`;
+            // Almacena la URL acortada en las cookies del usuario
+            Cookies.set(uniqueCookieName, shortUrl);
+            console.log('URL acortada:', shortUrl);
+        } catch (error) {
+            console.error('Error al acortar la URL:', error);
+        }
+        setUrl('');
+    };
 
     return (
         <div>
@@ -37,7 +40,7 @@ const AddUrlComponent = () => {
                             type="text"
                             placeholder="Escribe la dirección web"
                             value={url}
-                            onChange={e => setUrl(e.target.value)}
+                            onChange={(e) => setUrl(e.target.value)}
                         />
                         <div class="d-grid gap-3 col-6 mx-auto">
                             <button type="submit" className="btn btn-success m-5">
@@ -49,6 +52,6 @@ const AddUrlComponent = () => {
             </main>
         </div>
     );
-}
+};
 
 export default AddUrlComponent;

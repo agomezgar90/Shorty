@@ -3,11 +3,13 @@ const shortid = require("shortid");
 const mysql = require("mysql2");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -15,7 +17,7 @@ const db = mysql.createConnection({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-})
+});
 
 db.connect(err => {
     if (err) {
@@ -34,9 +36,10 @@ app.get('/app', async (req, res) => {
             res.json(results);
         }
     });
-})
+});
 
 app.post("/short", async (req, res) => {
+    console.log("hola");
     const fullUrl = req.body.urlOriginal;
     const base = `http://localhost:3333/api`;
     db.query('SELECT * FROM `url` WHERE `fullUrl` = ?', fullUrl, (error, results) => {
@@ -56,7 +59,7 @@ app.post("/short", async (req, res) => {
                     return;
                 }
             });
-            res.redirect("/");
+            res.status(200).json({ shortUrl: url.shortUrl });
         } else {
             const _short = results[0].shortUrl;
             const _counts = results[0].counts;
@@ -73,7 +76,8 @@ app.post("/short", async (req, res) => {
 app.delete("/app/:id", async (req, res) => {
     const id = req.params.id;
     try {
-        await db.query('DELETE FROM url WHERE id = ?', id);
+        db.query('DELETE FROM url WHERE id = ?', id);
+        res.clearCookie('shortUrl'); // Elimina la cookie al eliminar la URL
         res.status(200).json({ message: "URL deleted successfully" });
     } catch (error) {
         console.error("Error deleting URL:", error);
@@ -84,22 +88,22 @@ app.delete("/app/:id", async (req, res) => {
 app.get("/api/:shortUrl", async (req, res) => {
     const base = `http://localhost:3333/api`;
     try {
-        const shortUrl = req.params.shortUrl; // Cambié urlId a shortUrl para que coincida con el parámetro de la ruta
+        const shortUrl = req.params.shortUrl;
         console.log(shortUrl);
         const finalurl = `${base}/${shortUrl}`
         db.query('SELECT * FROM `url` WHERE `shortUrl` = ?', finalurl, (error, results) => {
             if (error) {
-                console.log("Error:", error); // Corregí el mensaje de error
-                return res.status(500).json("Server Error"); // Devolver una respuesta de error al cliente
+                console.log("Error:", error);
+                return res.status(500).json("Server Error");
             } else {
-                if (results.length > 0) { // Comprueba si se encontraron resultados
+                if (results.length > 0) {
                     console.log(results);
-                    const url = results[0]; // Obtiene el primer resultado de la consulta
+                    const url = results[0];
                     url.counts++;
                     db.query('UPDATE `url` SET `counts` = ? WHERE `shortUrl` = ?', [url.counts, finalurl], (updateError, updateResult) => {
                         if (updateError) {
-                            console.log("Error updating count:", updateError); // Maneja el error de actualización
-                            return res.status(500).json("Server Error"); // Devolver una respuesta de error al cliente
+                            console.log("Error updating count:", updateError);
+                            return res.status(500).json("Server Error");
                         }
                         return res.redirect(url.fullUrl);
                     });
@@ -118,10 +122,3 @@ const PORT = process.env.PORT || 3333;
 app.listen(PORT, () => {
     console.log(`Server is running at PORT: ${PORT}`);
 });
-
-
-
-
-
-
-
