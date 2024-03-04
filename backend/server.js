@@ -3,13 +3,13 @@ const shortid = require("shortid");
 const mysql = require("mysql2");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const cookieParser = require("cookie-parser");
+
 
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(cookieParser());
+
 
 const db = mysql.createConnection({
     host: process.env.DB_HOST,

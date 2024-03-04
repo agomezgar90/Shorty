@@ -3,7 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const ViewUrlComponent = () => {
-  const [urls, setUrls] = useState([]);
+  const [urls, setUrls] = useState([{}]);
   useEffect(() => {
     const fetchUrls = async () => {
       try {
