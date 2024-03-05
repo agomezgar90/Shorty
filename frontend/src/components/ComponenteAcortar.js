@@ -1,30 +1,34 @@
 import React, { useState } from 'react'
 import axios from "axios";
 
-const AddUrlComponent = () => {
-    const [url, setUrl] = useState("");
+const AddUrlComponent = ({ setUrls }) => {
+    
+    const fetchUrlAndSetUrl = async () => {
+        const result = await axios.get("http://localhost:3333/app");
+        console.log(result.data);
+        setUrls(result.data);
+      };
 
 
+    console.log("Fallo");
+    const [url, setUrl] = useState([]);
+    
     const onSubmit = (e) => {
         e.preventDefault();
-
         if (!url) {
             alert("please enter something");
             return;
         }
-
         axios
             .post("http://localhost:3333/short", { urlOriginal: url })
             .then(res => {
-                console.log(res.data);
+                fetchUrlAndSetUrl();
             })
             .catch(err => {
                 console.log(err.message);
             });
-
         setUrl("")
     }
-    console.log(url)
 
     return (
         <div>

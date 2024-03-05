@@ -36,44 +36,47 @@ app.get('/app', async (req, res) => {
     });
 })
 
+
 app.post("/short", async (req, res) => {
     const fullUrl = req.body.urlOriginal;
     const base = `http://localhost:3333/api`;
     db.query('SELECT * FROM `url` WHERE `fullUrl` = ?', fullUrl, (error, results) => {
         if (error) {
-            console.log(fullUrl);
             console.log("we got error");
+            res.status(500).send({ error: 'Error fetching URL from database' });
             return;
         }
         if (results.length === 0) {
             const short = shortid.generate();
-            const urlshortie = `${base}${short}`;
-            console.log(urlshortie);
             const url = { fullUrl: fullUrl, shortUrl: `${base}/${short}`, counts: 1 };
-            db.query('INSERT INTO `url` SET ?', url, (err, res) => {
+            db.query('INSERT INTO `url` SET ?', url, (err, result) => {
                 if (err) {
                     console.log("Error creating table");
+                    res.status(500).send({ error: 'Error creating URL in database' });
                     return;
                 }
+                res.json(results)
             });
         } else {
             const _short = results[0].shortUrl;
             const _counts = results[0].counts;
-            db.query('UPDATE `url` SET `counts` = ? WHERE `shortUrl` = ?', [_counts + 1, _short], (err, res) => {
+            db.query('UPDATE `url` SET `counts` = ? WHERE `shortUrl` = ?', [_counts + 1, _short], (err, result) => {
                 if (err) {
                     console.log("Error updating table");
+                    res.status(500).send({ error: 'Error updating URL in database' });
                     return;
                 }
+                res.json(results)
             });
-        };
+        }
     });
 });
+
 
 app.delete("/app/:id", async (req, res) => {
     const id = req.params.id;
     try {
         db.query('DELETE FROM url WHERE id = ?', id);
-        res.status(200).json({ message: "URL deleted successfully" });
     } catch (error) {
         console.error("Error deleting URL:", error);
         res.status(500).json({ error: "Failed to delete URL" });
@@ -83,22 +86,20 @@ app.delete("/app/:id", async (req, res) => {
 app.get("/api/:shortUrl", async (req, res) => {
     const base = `http://localhost:3333/api`;
     try {
-        const shortUrl = req.params.shortUrl; // Cambié urlId a shortUrl para que coincida con el parámetro de la ruta
-        console.log(shortUrl);
+        const shortUrl = req.params.shortUrl;
         const finalurl = `${base}/${shortUrl}`
         db.query('SELECT * FROM `url` WHERE `shortUrl` = ?', finalurl, (error, results) => {
             if (error) {
-                console.log("Error:", error); // Corregí el mensaje de error
-                return res.status(500).json("Server Error"); // Devolver una respuesta de error al cliente
+                console.log("Error:", error);
+                return res.status(500).json("Server Error");
             } else {
-                if (results.length > 0) { // Comprueba si se encontraron resultados
-                    console.log(results);
-                    const url = results[0]; // Obtiene el primer resultado de la consulta
+                if (results.length > 0) {
+                    const url = results[0];
                     url.counts++;
                     db.query('UPDATE `url` SET `counts` = ? WHERE `shortUrl` = ?', [url.counts, finalurl], (updateError, updateResult) => {
                         if (updateError) {
-                            console.log("Error updating count:", updateError); // Maneja el error de actualización
-                            return res.status(500).json("Server Error"); // Devolver una respuesta de error al cliente
+                            console.log("Error updating count:", updateError);
+                            return res.status(500).json("Server Error");
                         }
                         return res.redirect(url.fullUrl);
                     });
