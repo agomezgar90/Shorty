@@ -3,18 +3,15 @@ import axios from "axios"
 import DeleteUrlButton from './ComponenteBorrar'
 
 
-const ViewUrlComponent = ({ urls, setUrls }) => {
-  console.log("Fallo");
+const ComponenteVista = ({ urls, setUrls }) => {
   
   const fetchUrlAndSetUrl = async () => {
     const result = await axios.get("http://localhost:3333/app");
     setUrls(result.data);
   };
 
-  console.log("FALLO");
   useEffect(() => {
     fetchUrlAndSetUrl();
-    console.log("Fallo");
   }, [])
 
   const handleDeleteUrl = (id) => {
@@ -52,4 +49,4 @@ const ViewUrlComponent = ({ urls, setUrls }) => {
     </div>
   );
 }
-export default ViewUrlComponent;
+export default ComponenteVista;

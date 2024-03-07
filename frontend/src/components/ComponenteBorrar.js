@@ -1,8 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-const DeleteUrlButton = ({ id, onDelete }) => {
-  console.log("Fallo");
+const ComponenteBorrar = ({ id, onDelete }) => {
 
   const deleteUrl = async () => {
     try {
@@ -16,4 +15,4 @@ const DeleteUrlButton = ({ id, onDelete }) => {
     <button type='button' className='btn btn-danger btn-sm' onClick={deleteUrl}>X</button>
   );
 };
-export default DeleteUrlButton;
+export default ComponenteBorrar;

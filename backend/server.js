@@ -72,6 +72,29 @@ app.post("/short", async (req, res) => {
     });
 });
 
+app.get("/app/:fullUrl", async (req, res) => {
+    console.log(req.params.fullUrl);
+    try {
+        const fullUrl = req.params.fullUrl;
+        db.query('SELECT * FROM `url` WHERE `fullUrl` = ?', fullUrl, (error, results) => {
+            if (error) {
+                console.log("Error:", error);
+                return res.status(500).json("Server Error");
+            } else {
+                if (results.length > 0) {
+
+                    res.send(results[0]);
+                } else {
+                    res.status(404).json("Not found");
+                }
+            }
+        });
+    } catch (err) {
+        console.log("Catch block error:", err);
+        res.status(500).json("Server Error");
+    }
+});
+
 
 app.delete("/app/:id", async (req, res) => {
     const id = req.params.id;

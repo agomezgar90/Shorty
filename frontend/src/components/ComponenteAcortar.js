@@ -1,18 +1,22 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from "axios";
 
-const AddUrlComponent = ({ setUrls }) => {
-    
+const ComponenteBorrar = ({ setUrls }) => {
+
     const fetchUrlAndSetUrl = async () => {
         const result = await axios.get("http://localhost:3333/app");
         console.log(result.data);
         setUrls(result.data);
-      };
+    };
 
-
-    console.log("Fallo");
     const [url, setUrl] = useState([]);
-    
+    const [urlSingular, setUrlSingular] = useState([]);
+
+    useEffect(() => {
+        console.log(urlSingular)
+
+    }, [urlSingular])
+
     const onSubmit = (e) => {
         e.preventDefault();
         if (!url) {
@@ -27,8 +31,14 @@ const AddUrlComponent = ({ setUrls }) => {
             .catch(err => {
                 console.log(err.message);
             });
+        prueba(url);
         setUrl("")
     }
+
+    const prueba = async (url) => {
+        const result = await axios.get(`http://localhost:3333/app/${encodeURIComponent(url)}`);
+        setUrlSingular(result.data);
+    };
 
     return (
         <div>
@@ -55,4 +65,4 @@ const AddUrlComponent = ({ setUrls }) => {
     );
 }
 
-export default AddUrlComponent;
+export default ComponenteBorrar;
