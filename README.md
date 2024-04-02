@@ -16,6 +16,7 @@ Consiste en un acortador de URL como los muchos que se pueden encontrar en la we
 - URLS que se guarden en las cookies por si un usuario no se quiere registrar
 - Frontend más responsive y estilizado
 - Personalización del dominio de la URL acortada.
+- HTTPS para el servidor y el cliente.
 
 **Las tecnologias con las que estoy realizando este proyecto son:**
 

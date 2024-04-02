@@ -31,14 +31,10 @@ const ComponenteBorrar = ({ setUrls }) => {
             .catch(err => {
                 console.log(err.message);
             });
-        prueba(url);
         setUrl("")
     }
 
-    const prueba = async (url) => {
-        const result = await axios.get(`http://localhost:3333/app/${encodeURIComponent(url)}`);
-        setUrlSingular(result.data);
-    };
+    
 
     return (
         <div>
